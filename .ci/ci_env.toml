@@ -1,0 +1,16 @@
+# CI test runner configuration
+#
+# env entries:
+#   KEY=VALUE    — exported as-is in local dev and CI
+#
+# Service-specific host secrets (APP_DATABASE__HOST, APP_GRAPHDB__HOST) are
+# injected directly from per-repo GitHub Actions secrets by the CI workflow:
+#   CI_STAGE_SERVICE_POSTGRES_HOST  — set per-repo by ansible k8s-bootstrap
+#   CI_STAGE_SERVICE_NEO4J_HOST     — set per-repo by ansible k8s-bootstrap
+# No need to list them here; they never appear blank.
+
+coverage_threshold = 55
+
+engine = "cargo"
+env = []
+flags = ["--lib"]
