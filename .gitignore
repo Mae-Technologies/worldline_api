@@ -1,0 +1,8 @@
+/target/
+**/*.rs.bk
+**/*.rs.orig
+**/*.rs.tmp
+**/debug/
+**/release/
+*.rs.meta
+rust-project.json
