@@ -489,11 +489,6 @@ pub fn redact_account_number(number: u64, raw: &str) -> String {
     format!("***{}", &digits[digits.len() - 4..])
 }
 
-pub(crate) fn account_number_is_masked(raw: &str) -> bool {
-    let trimmed = raw.trim();
-    trimmed.contains('*') || trimmed.contains('X') || trimmed.contains('x')
-}
-
 pub fn format_bank_label(
     holder: &str,
     institution_number: u64,
@@ -639,6 +634,11 @@ pub fn format_card_label(card_type: Option<&str>, number: &str, name: &str) -> S
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    fn account_number_is_masked(raw: &str) -> bool {
+        let trimmed = raw.trim();
+        trimmed.contains('*') || trimmed.contains('X') || trimmed.contains('x')
+    }
 
     #[test]
     fn profile_update_json_omits_null_token_and_bank_account() {
