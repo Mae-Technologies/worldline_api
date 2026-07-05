@@ -364,6 +364,18 @@ pub struct ProfileError {
     pub message: String
 }
 
+impl fmt::Display for ProfileError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "code: {}, category: {}, message: {}", self.code, self.category, self.message)
+    }
+}
+
+impl error::Error for ProfileError {
+    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+        None
+    }
+}
+
 /// Lenient bank account parse for Worldline GET profile (masked account numbers, string transit fields).
 #[derive(Debug, Clone)]
 pub struct BankAccountRead {
@@ -935,17 +947,5 @@ mod tests {
         let update_json = serde_json::to_value(&update).expect("update card");
         let _: UpdateCardRequest =
             serde_json::from_value(update_json).expect("update card roundtrip");
-    }
-}
-
-impl fmt::Display for ProfileError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "code: {}, category: {}, message: {}", self.code, self.category, self.message)
-    }
-}
-
-impl error::Error for ProfileError {
-    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
-        None
     }
 }
