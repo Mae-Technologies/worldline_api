@@ -1,3 +1,8 @@
+//! Payment profile request/response types for the Worldline NAM Profiles API.
+//!
+//! Public types mirror Worldline JSON field names. Use [`BillingAddress::validate_for_worldline`]
+//! and [`BankAccount::validate_for_worldline`] before POST/PUT payloads.
+
 use serde::de::{self, Unexpected, Visitor};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_json::json;
@@ -171,8 +176,10 @@ where
     deserializer.deserialize_any(CardIdVisitor)
 }
 
+/// Outcome of a profile create/update API call.
 pub type ProfileResult = Result<ProfileSuccessResult, ProfileErrorResult>;
 
+/// Request body for creating or updating a Worldline payment profile.
 #[derive(Deserialize, Debug, Serialize)]
 pub struct Profile {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -482,7 +489,7 @@ pub fn redact_account_number(number: u64, raw: &str) -> String {
     format!("***{}", &digits[digits.len() - 4..])
 }
 
-pub fn account_number_is_masked(raw: &str) -> bool {
+pub(crate) fn account_number_is_masked(raw: &str) -> bool {
     let trimmed = raw.trim();
     trimmed.contains('*') || trimmed.contains('X') || trimmed.contains('x')
 }
@@ -608,7 +615,7 @@ pub fn redact_card_number(number: &str) -> String {
     format!("{first}***{last}")
 }
 
-pub fn card_type_label(card_type: &str) -> String {
+pub(crate) fn card_type_label(card_type: &str) -> String {
     match card_type.trim().to_ascii_uppercase().as_str() {
         "VI" | "VISA" => "Visa".to_string(),
         "MC" | "MASTER" | "MASTERCARD" => "Mastercard".to_string(),

@@ -1,3 +1,5 @@
+//! Batch settlement request/response types for the Worldline NAM Batch API.
+
 use serde::de::{self, Visitor};
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_json::json;

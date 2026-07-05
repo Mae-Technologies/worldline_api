@@ -1,8 +1,13 @@
 [package]
-license = "LicenseRef-Proprietary"
+license = "MIT"
 name = "worldline_api"
 version = "0.1.0"
 edition = "2024"
+description = "Serde models for the Worldline NAM payment profiles and batch APIs"
+readme = "README.md"
+repository = "https://github.com/Mae-Technologies/worldline_api"
+keywords = ["worldline", "payments", "merchant", "serde"]
+categories = ["api-bindings", "encoding"]
 
 [lib]
 path = "src/lib.rs"
