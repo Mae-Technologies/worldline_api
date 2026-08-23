@@ -3,13 +3,19 @@
 # env entries:
 #   KEY=VALUE    — exported as-is in local dev and CI
 #
-# Service-specific host secrets (APP_DATABASE__HOST, APP_GRAPHDB__HOST) are
-# injected directly from per-repo GitHub Actions secrets by the CI workflow:
-#   CI_STAGE_SERVICE_POSTGRES_HOST  — set per-repo by ansible k8s-bootstrap
-#   CI_STAGE_SERVICE_NEO4J_HOST     — set per-repo by ansible k8s-bootstrap
-# No need to list them here; they never appear blank.
+# Service-specific host secrets (APP_DATABASE__HOST, APP_GRAPHDB__HOST) were
+# for in-cluster Helm's Deep (dropped). Local int-test.sh uses testcontainers
+# via MAE_TESTCONTAINERS. Remote GHA measures the same suite with that unset.
+#
+# coverage_threshold is the accepted line-coverage floor (llvm-cov --fail-under-lines).
+# 85 is the healthy target: industry 80–90 band (Qt/LaunchDarkly "healthy"),
+# Google 60/75/90 = acceptable/commendable/exemplary with project-wide >90
+# "most likely not worth it". 0 skips llvm-cov (mae_macros). Existing crates
+# may override downward with a "raise to 85" comment until tests/ suite catches up.
+#
+# Nominal 81 (measured 82.17%). Raise to 85 (worldline_api#1).
 
-coverage_threshold = 55
+coverage_threshold = 81
 
 engine = "cargo"
 env = []

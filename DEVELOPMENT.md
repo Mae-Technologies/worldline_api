@@ -8,7 +8,7 @@ Code quality, safety, security, and reliability — no exceptions.
 
 ### cargo-llvm-cov (Required)
 
-`cargo-llvm-cov` is **mandatory**. The pre-push hook and `smoke-test.sh` hard-fail without it.
+`cargo-llvm-cov` and `cargo-nextest` are **mandatory**. The pre-push hook and `smoke-test.sh` hard-fail without llvm-cov; coverage uses `llvm-cov nextest`.
 
 ```bash
 cargo +nightly install cargo-llvm-cov
@@ -113,15 +113,18 @@ mae = { version = "...", features = ["test-utils"] }
 The pre-push hook runs `scripts/smoke-test.sh` before every push. All checks must pass:
 
 ```bash
-cargo +nightly fmt -- --check
-cargo +nightly clippy --all-targets --all-features -- -D warnings -D clippy::undocumented_unsafe_blocks
-cargo +nightly miri test --lib
-bash scripts/int-test.sh           # full integration test suite
-cargo +nightly llvm-cov --lib --fail-under-lines <threshold>
+cargo fmt -- --check
+bash scripts/int-test.sh           # Docker e2e (#[mae_test(docker)]) — local only
+unset MAE_TESTCONTAINERS
+cargo +nightly llvm-cov nextest --no-pager --no-tests=warn --fail-under-lines <threshold>
 cargo clippy -- -D warnings
 cargo deny check
 trufflehog git file://. --since-commit HEAD~1 --only-verified --fail
 ```
+
+**Coverage:** line coverage of `src/` from the **`tests/` suite**, not inline `#[cfg(test)]`. Put new unit tests in `tests/unit_coverage.rs`, `tests/coverage/`, or `tests/unit/`. Docker-gated tests skip during llvm-cov so local and GitHub Actions measure the same number. Template `coverage_threshold` is **85** (healthy 80–90 band). Existing crates may override downward in `.ci/ci_env.toml` with a comment to raise back to 85. `coverage_threshold = 0` skips llvm-cov (`mae_macros`).
+
+**Remote CI** (`.github/workflows/ci.yml`, `ubuntu-latest`): fmt, that llvm-cov command, clippy, deny, TruffleHog. No Helm’s Deep / in-cluster CI Postgres/Neo4j.
 
 **Skip options (use sparingly):**
 
