@@ -294,7 +294,8 @@ impl BankAccount {
                     .to_string(),
             );
         }
-        if self.branch_number < 10_000 || self.branch_number > 99_999 {
+        // JSON numbers drop leading zeros (`885` == transit `00885`). Pad on serialize.
+        if self.branch_number == 0 || self.branch_number > 99_999 {
             return Err(
                 "Branch / transit number must be a 5-digit Canadian transit number.".to_string()
             );
@@ -867,8 +868,21 @@ mod tests {
     #[test]
     fn bank_account_validate_rejects_invalid_transit() {
         let mut bank = sample_bank_account();
-        bank.branch_number = 12;
+        bank.branch_number = 0;
         assert!(bank.validate_for_worldline().is_err());
+        bank.branch_number = 100_000;
+        assert!(bank.validate_for_worldline().is_err());
+    }
+
+    #[test]
+    fn bank_account_validate_accepts_short_transit_and_serializes_padded() {
+        let mut bank = sample_bank_account();
+        bank.branch_number = 885;
+        bank.institution_number = 3;
+        assert!(bank.validate_for_worldline().is_ok());
+        let value = serde_json::to_value(&bank).expect("bank json");
+        assert_eq!(value["branch_number"], "00885");
+        assert_eq!(value["institution_number"], "003");
     }
 
     #[test]
