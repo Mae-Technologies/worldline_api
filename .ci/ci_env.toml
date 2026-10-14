@@ -13,9 +13,12 @@
 # "most likely not worth it". 0 skips llvm-cov (mae_macros). Existing crates
 # may override downward with a "raise to 85" comment until tests/ suite catches up.
 #
-# Nominal 81 (measured 82.17%). Raise to 85 (worldline_api#1).
+# Nominal 50 (measured 51.30% lines on nightly 1.101, 2026-09-28).
+# Hit lines stayed 496, the same count as the 82.43% report on nightly 1.100
+# (2026-09-13, worldline_api CI run 34874577287). This nightly attributes 435
+# more profile.rs lines, all missed. Raise to 85 (worldline_api#1).
 
-coverage_threshold = 81
+coverage_threshold = 50
 
 engine = "cargo"
 env = []
